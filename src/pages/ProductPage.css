@@ -1,0 +1,36 @@
+.product-page {
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+.product-detail {
+  border: 1px solid #dedede;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.product-detail-thumb {
+  border: 1px dashed #cccccc;
+  border-radius: 0.5rem;
+  background: #f6f6f6;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  color: #777;
+  margin-bottom: 0.8rem;
+}
+
+.product-detail h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.product-detail-price {
+  margin: 0.4rem 0 0;
+  color: #666;
+}
+
+.product-detail-description {
+  margin: 0.8rem 0 0;
+  line-height: 1.4;
+}

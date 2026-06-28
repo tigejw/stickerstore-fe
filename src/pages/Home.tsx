@@ -1,19 +1,16 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import NavBar from '../componants/NavBar'
 import './Home.css'
 
 type Product = {
   product_id: number
+  slug: string
   name: string
   price: number
   thumbnail?: string | null
 }
-
-const navLinks = [
-  { label: 'Stickers', to: '/stickers' },
-  { label: 'Bundles', to: '/bundles' },
-]
 
 function formatPriceFromCents(value: number) {
   return new Intl.NumberFormat('en-US', {
@@ -38,19 +35,7 @@ export default function HomePage() {
 
   return (
     <main className="home-page">
-      <header className="home-nav" aria-label="Main navigation">
-        <div className="logo-placeholder">Logo</div>
-        <nav className="home-links">
-          {navLinks.map((link) => (
-            <Link key={link.to} to={link.to} className="home-link">
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-        <Link to="/cart" className="cart-placeholder">
-          Cart
-        </Link>
-      </header>
+      <NavBar />
 
       <section className="featured-section" aria-labelledby="featured-heading">
         <div className="featured-heading-wrap">
@@ -60,13 +45,21 @@ export default function HomePage() {
 
         <div className="product-grid" role="list" aria-label="New products">
           {products.map((product) => (
-            <article key={product.product_id} className="product-card" role="listitem">
-              <div className="product-thumb" aria-label={`${product.name} thumbnail placeholder`}>
-                Thumbnail
-              </div>
-              <h2 className="product-name">{product.name}</h2>
-              <p className="product-price">{formatPriceFromCents(product.price)}</p>
-            </article>
+            <Link
+              key={product.product_id}
+              to={`/stickers/${product.slug}`}
+              className="product-card-link"
+              role="listitem"
+            >
+              <article className="product-card">
+                <div className="product-thumb" aria-label={`${product.name} thumbnail placeholder`}>
+                  Thumbnail
+                </div>
+                <h2 className="product-name">{product.name}</h2>
+                <p className="product-price">{formatPriceFromCents(product.price)}</p>
+                <span className="product-action">View sticker</span>
+              </article>
+            </Link>
           ))}
         </div>
       </section>
