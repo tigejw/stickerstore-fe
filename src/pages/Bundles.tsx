@@ -1,12 +1,11 @@
 import NavBar from '../componants/NavBar'
-
+import ProductsDislpay from '../componants/ProductsDIsplay'
 export default function BundlesPage() {
   return (
     <main>
       <NavBar />
       <section>
-        <h1>Bundles</h1>
-        <p>Bundles page placeholder.</p>
+        <ProductsDislpay stickerOrBundle="bundle"></ProductsDislpay>
       </section>
     </main>
   )

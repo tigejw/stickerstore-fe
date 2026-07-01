@@ -13,9 +13,9 @@ type Product = {
 }
 
 function formatPriceFromCents(value: number) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-EN', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'EUR',
   }).format(value / 100)
 }
 
