@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import { useParams } from 'react-router-dom'
 import NavBar from '../componants/NavBar'
 import './ProductPage.css'
+import { CartContext } from '../contexts/CartContext'
 
 type Product = {
 
@@ -11,13 +12,12 @@ type Product = {
     name: string
     description: string
     price: number
+    thumbnail?: string | null
 
 }
 
 function formatPriceFromCents(value: number) {
-    console.log(value)
     const numericValue = Number(value) || NaN
-    console.log(value)
     return new Intl.NumberFormat('en-DE', {
         style: 'currency',
         currency: 'EUR',
@@ -28,16 +28,54 @@ export default function ProductPage() {
     const { slug } = useParams()
     const [product, setProduct] = useState<Product | null>(null)
     const [loading, setLoading] = useState(true)
+    const cartContext = useContext(CartContext)
+
+    if (!cartContext) {
+        throw new Error('CartContext error')
+    }
+
+    const { setCart } = cartContext
+
+    const handleAddToCart = () => {
+        if (!product) {
+            return
+        }
+
+        setCart((currentCart) => {
+            const existingItem = currentCart.find(
+                (item) => item.type === 'product' && item.id === product.product_id,
+            )
+
+            if (existingItem) {
+                return currentCart.map((item) =>
+                    item.type === 'product' && item.id === product.product_id
+                        ? { ...item, quantity: item.quantity + 1 }
+                        : item,
+                )
+            }
+
+            return [
+                ...currentCart,
+                {
+                    type: 'product',
+                    id: product.product_id,
+                    name: product.name,
+                    quantity: 1,
+                    thumbnail: product.thumbnail ?? null,
+                    price: product.price,
+                },
+            ]
+        })
+    }
 
     useEffect(() => {
-        console.log(slug)
         if (!slug) {
             setLoading(false)
             return
         }
 
         axios
-            .get<Product>(`http://localhost:9090/api/products/${slug}`)
+            .get<{ product: Product }>(`http://localhost:9090/api/products/${slug}`)
             .then((res) => {
                 setProduct(res.data.product)
             })
@@ -66,6 +104,9 @@ export default function ProductPage() {
 
                     <p className="product-detail-price">{formatPriceFromCents(product.price)}</p>
                     <p className="product-detail-description">{product.description}</p>
+                    <button type="button" className="product-detail-add-to-cart" onClick={handleAddToCart}>
+                        Add to cart
+                    </button>
                 </section>
             ) : null}
         </main>
