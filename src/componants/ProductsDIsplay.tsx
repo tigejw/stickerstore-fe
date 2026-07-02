@@ -89,7 +89,7 @@ export default function ProductsDislpay({ stickerOrBundle }: ProductsDisplayProp
                 {products.map((product) => (
                     <Link
                         key={product.product_id}
-                        to={`/stickers/${product.slug}`}
+                        to={`/${stickerOrBundle}s/${product.slug}`}
                         className="product-card-link"
                         role="listitem"
                     >

@@ -6,14 +6,31 @@ import './ProductPage.css'
 import { CartContext } from '../contexts/CartContext'
 
 type Product = {
-
     product_id: number
     slug: string
     name: string
     description: string
     price: number
     thumbnail?: string | null
+}
 
+type Bundle = {
+    bundle_id: number
+    slug: string
+    name: string
+    description: string
+    cover_image: string
+    price: number
+    active: boolean
+    created_at: string
+    is_new: boolean
+    products: Product[]
+}
+
+type ProductOrBundle = Product | Bundle
+type ProductPageResponse = {
+    product?: ProductOrBundle
+    bundle?: ProductOrBundle
 }
 
 function formatPriceFromCents(value: number) {
@@ -24,9 +41,13 @@ function formatPriceFromCents(value: number) {
     }).format(numericValue / 100)
 }
 
+function isBundle(item: ProductOrBundle): item is Bundle {
+    return 'bundle_id' in item
+}
+
 export default function ProductPage() {
-    const { slug } = useParams()
-    const [product, setProduct] = useState<Product | null>(null)
+    const { type, slug } = useParams()
+    const [item, setItem] = useState<ProductOrBundle | null>(null)
     const [loading, setLoading] = useState(true)
     const cartContext = useContext(CartContext)
 
@@ -37,78 +58,115 @@ export default function ProductPage() {
     const { setCart } = cartContext
 
     const handleAddToCart = () => {
-        if (!product) {
+        if (!item) {
             return
         }
 
         setCart((currentCart) => {
+            const itemId = isBundle(item) ? item.bundle_id : item.product_id
+            const itemType = isBundle(item) ? 'bundle' : 'product'
+
             const existingItem = currentCart.find(
-                (item) => item.type === 'product' && item.id === product.product_id,
+                (cartItem) => cartItem.type === itemType && cartItem.id === itemId,
             )
 
             if (existingItem) {
-                return currentCart.map((item) =>
-                    item.type === 'product' && item.id === product.product_id
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item,
+                return currentCart.map((cartItem) =>
+                    cartItem.type === itemType && cartItem.id === itemId
+                        ? { ...cartItem, quantity: cartItem.quantity + 1 }
+                        : cartItem,
                 )
             }
 
             return [
                 ...currentCart,
                 {
-                    type: 'product',
-                    id: product.product_id,
-                    name: product.name,
+                    type: itemType,
+                    id: itemId,
+                    name: item.name,
                     quantity: 1,
-                    thumbnail: product.thumbnail ?? null,
-                    price: product.price,
+                    thumbnail: isBundle(item) ? item.cover_image : item.thumbnail ?? null,
+                    price: item.price,
                 },
             ]
         })
     }
 
     useEffect(() => {
-        if (!slug) {
+        if (!type || !slug) {
             setLoading(false)
             return
         }
 
+        const apiPath = type === 'bundles' ? 'bundles' : 'products'
+        console.log(`http://localhost:9090/api/${apiPath}/${slug}`)
         axios
-            .get<{ product: Product }>(`http://localhost:9090/api/products/${slug}`)
+            .get<ProductPageResponse>(`http://localhost:9090/api/${apiPath}/${slug}`)
             .then((res) => {
-                setProduct(res.data.product)
+                setItem(res.data.product ?? res.data.bundle ?? null)
             })
             .catch(() => {
-                setProduct(null)
+                setItem(null)
             })
             .finally(() => {
                 setLoading(false)
             })
-    }, [slug])
+    }, [type, slug])
+
+    if (loading) {
+        return (
+            <main className="product-page">
+                <NavBar />
+                <p>Loading product...</p>
+            </main>
+        )
+    }
+
+    if (!item) {
+        return (
+            <main className="product-page">
+                <NavBar />
+                <p>Product not found.</p>
+            </main>
+        )
+    }
+
+    const isBundleItem = isBundle(item)
+    const imageUrl = isBundleItem ? item.cover_image : item.thumbnail
 
     return (
         <main className="product-page">
             <NavBar />
+            <section className="product-detail" aria-labelledby="product-title">
+                <div className="product-detail-thumb" aria-label={`${item.name} thumbnail placeholder`}>
+                    {imageUrl ? (
+                        <img src={imageUrl} alt={item.name} />
+                    ) : (
+                        'Thumbnail'
+                    )}
+                </div>
+                <h1 id="product-title">{item.name}</h1>
 
-            {loading ? <p>Loading product...</p> : null}
-
-            {!loading && !product ? <p>Product not found.</p> : null}
-
-            {product ? (
-                <section className="product-detail" aria-labelledby="product-title">
-                    <div className="product-detail-thumb" aria-label={`${product.name} thumbnail placeholder`}>
-                        Thumbnail
+                <p className="product-detail-price">{formatPriceFromCents(item.price)}</p>
+                <p className="product-detail-description">{item.description}</p>
+                
+                {isBundleItem && (
+                    <div className="bundle-products">
+                        <h2>Includes:</h2>
+                        <ul>
+                            {item.products.map((product) => (
+                                <li key={product.product_id}>
+                                    {product.name} - {formatPriceFromCents(product.price)}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                    <h1 id="product-title">{product.name}</h1>
+                )}
 
-                    <p className="product-detail-price">{formatPriceFromCents(product.price)}</p>
-                    <p className="product-detail-description">{product.description}</p>
-                    <button type="button" className="product-detail-add-to-cart" onClick={handleAddToCart}>
-                        Add to cart
-                    </button>
-                </section>
-            ) : null}
+                <button type="button" className="product-detail-add-to-cart" onClick={handleAddToCart}>
+                    Add to cart
+                </button>
+            </section>
         </main>
     )
 }

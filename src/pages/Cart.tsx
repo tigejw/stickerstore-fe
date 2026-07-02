@@ -1,4 +1,5 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
+import axios from 'axios'
 import NavBar from '../componants/NavBar'
 import { CartContext, type CartItem } from '../contexts/CartContext'
 
@@ -11,12 +12,48 @@ function formatPriceFromCents(value: number) {
 
 export default function CartPage() {
   const cartContext = useContext(CartContext)
+  const [checkingOut, setCheckingOut] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   if (!cartContext) {
     throw new Error('CartContext error')
   }
 
   const { cart, setCart } = cartContext
+
+  const handleCheckout = async () => {
+    if (cart.length === 0 || checkingOut) {
+      return
+    }
+
+    setCheckingOut(true)
+    setCheckoutError(null)
+
+    try {
+      const response = await axios.post<{ session?: { url?: string } }>(
+        'http://localhost:9090/api/create-webhook-session',
+        {
+          items: cart.map((item) => ({
+            type: item.type,
+            id: String(item.id),
+            quantity: item.quantity,
+          })),
+        },
+      )
+
+      const checkoutUrl = response.data.session?.url
+
+      if (!checkoutUrl) {
+        throw new Error('Checkout session did not return a URL.')
+      }
+
+      window.location.assign(checkoutUrl)
+    } catch {
+      setCheckoutError('Unable to start checkout. Please try again.')
+    } finally {
+      setCheckingOut(false)
+    }
+  }
 
   const handleUpdateQuantity = (id: number, type: 'product' | 'bundle', change: number) => {
     setCart((prevCart) => {
@@ -44,6 +81,7 @@ export default function CartPage() {
         <h1>Cart</h1>
         {cart.length === 0 ? <p>Your cart is empty.</p> : null}
         {cart.length > 0 ? <p>{cart.length} item type(s) in your cart.</p> : null}
+        {checkoutError ? <p>{checkoutError}</p> : null}
         <ul>
           {cart.map((cartItem: CartItem) => {
             return (
@@ -82,6 +120,9 @@ export default function CartPage() {
             )
           })}
         </ul>
+        <button type="button" onClick={handleCheckout} disabled={cart.length === 0 || checkingOut}>
+          {checkingOut ? 'Starting checkout...' : 'Checkout'}
+        </button>
       </section>
     </main>
   )
