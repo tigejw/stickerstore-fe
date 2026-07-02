@@ -16,7 +16,26 @@ export default function CartPage() {
     throw new Error('CartContext error')
   }
 
-  const { cart } = cartContext
+  const { cart, setCart } = cartContext
+
+  const handleUpdateQuantity = (id: number, type: 'product' | 'bundle', change: number) => {
+    setCart((prevCart) => {
+      return prevCart
+        .map((item) => {
+          if (item.id === id && item.type === type) {
+            return { ...item, quantity: item.quantity + change }
+          }
+          return item
+        })
+        .filter((item) => item.quantity > 0)
+    })
+  }
+
+  const handleRemoveItem = (id: number, type: 'product' | 'bundle') => {
+    setCart((prevCart) => {
+      return prevCart.filter((item) => !(item.id === id && item.type === type))
+    })
+  }
 
   return (
     <main>
@@ -33,12 +52,31 @@ export default function CartPage() {
                   {cartItem.thumbnail ? (
                     <img src={cartItem.thumbnail} alt={cartItem.name} width={72} height={72} />
                   ) : (
-                    <div aria-label={`${cartItem.name} thumbnail placeholder`}>Thumbnail</div>
+                    <div>Thumbnail</div>
                   )}
                 </div>
                 <div>Name: {cartItem.name}</div>
                 <div>Type: {cartItem.type}</div>
-                <div>Quantity: {cartItem.quantity}</div>
+                <div>
+                  Quantity: {cartItem.quantity}
+                  <button
+                    onClick={() => handleUpdateQuantity(cartItem.id, cartItem.type, -1)}
+                  >
+                    -
+                  </button>
+                  <button
+                    onClick={() => handleUpdateQuantity(cartItem.id, cartItem.type, 1)}
+                  >
+                    +
+                  </button>
+                </div>
+                <div>
+                  <button
+                    onClick={() => handleRemoveItem(cartItem.id, cartItem.type)}
+                  >
+                    Remove Item
+                  </button>
+                </div>
                 <div>Price: {formatPriceFromCents(cartItem.price)}</div>
               </li>
             )

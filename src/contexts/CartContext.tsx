@@ -13,25 +13,6 @@ export type Cart = CartItem[]
 
 const CART_STORAGE_KEY = 'stickerstore-cart'
 
-function normalizeCartItem(item: Partial<CartItem>): CartItem | null {
-    if (item.type !== 'product' && item.type !== 'bundle') {
-        return null
-    }
-
-    if (typeof item.id !== 'number' || Number.isNaN(item.id)) {
-        return null
-    }
-
-    return {
-        type: item.type,
-        id: item.id,
-        name: typeof item.name === 'string' ? item.name : 'Unnamed item',
-        quantity: typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1,
-        thumbnail: typeof item.thumbnail === 'string' ? item.thumbnail : null,
-        price: typeof item.price === 'number' ? item.price : 0,
-    }
-}
-
 function getInitialCart(): Cart {
     if (typeof window === 'undefined') {
         return []
