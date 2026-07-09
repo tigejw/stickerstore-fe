@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import axios from 'axios'
 import NavBar from '../componants/NavBar'
 import { CartContext, type CartItem } from '../contexts/CartContext'
@@ -21,14 +21,23 @@ export default function CartPage() {
 
   const { cart, setCart } = cartContext
 
+  const { totalItems, totalPriceCents } = useMemo(() => {
+    return cart.reduce(
+      (acc, item) => {
+        acc.totalItems += item.quantity
+        acc.totalPriceCents += item.price * item.quantity
+        return acc
+      },
+      { totalItems: 0, totalPriceCents: 0 },
+    )
+  }, [cart])
+
   const handleCheckout = async () => {
     if (cart.length === 0 || checkingOut) {
       return
     }
-
     setCheckingOut(true)
     setCheckoutError(null)
-
     try {
       const response = await axios.post<{ session?: { url?: string } }>(
         'http://localhost:9090/api/create-webhook-session',
@@ -40,13 +49,10 @@ export default function CartPage() {
           })),
         },
       )
-
       const checkoutUrl = response.data.session?.url
-
       if (!checkoutUrl) {
         throw new Error('Checkout session did not return a URL.')
       }
-
       window.location.assign(checkoutUrl)
     } catch {
       setCheckoutError('Unable to start checkout. Please try again.')
@@ -97,29 +103,33 @@ export default function CartPage() {
                 <div>Type: {cartItem.type}</div>
                 <div>
                   Quantity: {cartItem.quantity}
-                  <button
-                    onClick={() => handleUpdateQuantity(cartItem.id, cartItem.type, -1)}
-                  >
+                  <button onClick={() => handleUpdateQuantity(cartItem.id, cartItem.type, -1)}>
                     -
                   </button>
-                  <button
-                    onClick={() => handleUpdateQuantity(cartItem.id, cartItem.type, 1)}
-                  >
+                  <button onClick={() => handleUpdateQuantity(cartItem.id, cartItem.type, 1)}>
                     +
                   </button>
                 </div>
                 <div>
-                  <button
-                    onClick={() => handleRemoveItem(cartItem.id, cartItem.type)}
-                  >
+                  <button onClick={() => handleRemoveItem(cartItem.id, cartItem.type)}>
                     Remove Item
                   </button>
                 </div>
                 <div>Price: {formatPriceFromCents(cartItem.price)}</div>
+                <div>Subtotal: {formatPriceFromCents(cartItem.price * cartItem.quantity)}</div>
               </li>
             )
           })}
         </ul>
+
+        {cart.length > 0 ? (
+          <div>
+            <h2>Order Summary</h2>
+            <div>Total items: {totalItems}</div>
+            <div>Total: {formatPriceFromCents(totalPriceCents)}</div>
+          </div>
+        ) : null}
+
         <button type="button" onClick={handleCheckout} disabled={cart.length === 0 || checkingOut}>
           {checkingOut ? 'Starting checkout...' : 'Checkout'}
         </button>
