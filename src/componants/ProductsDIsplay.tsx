@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { API_URL } from '../api'
 
 //extract out WET
 type Product = {
@@ -55,7 +56,7 @@ export default function ProductsDislpay({ stickerOrBundle }: ProductsDisplayProp
 
         axios
             .get<Product[]>(
-                `http://localhost:9090/api/${stickerOrBundle === "sticker" ? "products" : "bundles"}?sort_by=${sort_by}&order=${order}`
+                `${API_URL}/${stickerOrBundle === "sticker" ? "products" : "bundles"}?sort_by=${sort_by}&order=${order}`
             )
             .then((res) => {
                 setProducts(res.data)

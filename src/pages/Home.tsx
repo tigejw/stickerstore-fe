@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import { API_URL } from '../api'
 import NavBar from '../componants/NavBar'
 import './Home.css'
 
@@ -24,9 +25,10 @@ export default function HomePage() {
 
   useEffect(() => {
     axios
-      .get<Product[]>('http://localhost:9090/api/products?is_new=true')
+      .get<Product[]>(`${API_URL}/products?is_new=true`)
       .then((res) => {
         setProducts(res.data)
+        console.log(res.data)
       })
       .catch(() => {
         setProducts([])
@@ -52,9 +54,10 @@ export default function HomePage() {
               role="listitem"
             >
               <article className="product-card">
-                <div className="product-thumb" aria-label={`${product.name} thumbnail placeholder`}>
-                  Thumbnail
-                </div>
+                {/* {product.thumbnail ? <img src={product.thumbnail} aria-label={`${product.name} thumbnail`}></img> :
+                  <div className="product-thumb" aria-label={`${product.name} thumbnail placeholder`}>
+                    Thumbnail
+                  </div>} */}
                 <h2 className="product-name">{product.name}</h2>
                 <p className="product-price">{formatPriceFromCents(product.price)}</p>
                 <span className="product-action">View sticker</span>

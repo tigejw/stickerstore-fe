@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import NavBar from '../componants/NavBar'
 import './ProductPage.css'
 import { CartContext } from '../contexts/CartContext'
+import { API_URL } from '../api'
 
 type Product = {
     product_id: number
@@ -99,9 +100,8 @@ export default function ProductPage() {
         }
 
         const apiPath = type === 'bundles' ? 'bundles' : 'products'
-        console.log(`http://localhost:9090/api/${apiPath}/${slug}`)
         axios
-            .get<ProductPageResponse>(`http://localhost:9090/api/${apiPath}/${slug}`)
+            .get<ProductPageResponse>(`${API_URL}/${apiPath}/${slug}`)
             .then((res) => {
                 setItem(res.data.product ?? res.data.bundle ?? null)
             })

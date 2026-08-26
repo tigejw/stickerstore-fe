@@ -2,6 +2,7 @@ import { useContext, useMemo, useState } from 'react'
 import axios from 'axios'
 import NavBar from '../componants/NavBar'
 import { CartContext, type CartItem } from '../contexts/CartContext'
+import { API_URL } from '../api'
 
 function formatPriceFromCents(value: number) {
   return new Intl.NumberFormat('en-DE', {
@@ -40,7 +41,7 @@ export default function CartPage() {
     setCheckoutError(null)
     try {
       const response = await axios.post<{ session?: { url?: string } }>(
-        'http://localhost:9090/api/create-webhook-session',
+        `${API_URL}/create-webhook-session`,
         {
           items: cart.map((item) => ({
             type: item.type,
