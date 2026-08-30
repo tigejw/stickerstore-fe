@@ -12,7 +12,15 @@ type Product = {
     name: string
     description: string
     price: number
-    thumbnail?: string | null
+    thumbnail_url: string | null
+    thumbnail_alt_text: string
+}
+
+interface BundleImage {
+    image_url: string;
+    alt_text: string;
+    is_thumbnail: boolean;
+    display_order: number;
 }
 
 type Bundle = {
@@ -20,11 +28,13 @@ type Bundle = {
     slug: string
     name: string
     description: string
-    cover_image: string
+    thumbnail_url: string
+    thumbnail_alt_text: string
     price: number
     active: boolean
     created_at: string
     is_new: boolean
+    images: BundleImage[]
     products: Product[]
 }
 
@@ -67,7 +77,7 @@ export default function ProductPage() {
             type: isBundle(item) ? 'bundle' : 'product',
             id: isBundle(item) ? item.bundle_id : item.product_id,
             name: item.name,
-            thumbnail: isBundle(item) ? item.cover_image : item.thumbnail ?? null,
+            thumbnail_url: item.thumbnail_url,
             price: item.price,
         })
     }
@@ -111,7 +121,7 @@ export default function ProductPage() {
     }
 
     const isBundleItem = isBundle(item)
-    const imageUrl = isBundleItem ? item.cover_image : item.thumbnail
+    const imageUrl = item.thumbnail_url
 
     return (
         <main className="product-page">
