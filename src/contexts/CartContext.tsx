@@ -43,6 +43,7 @@ interface CartProvidersProps {
 export interface CartContextType {
     cart: Cart
     setCart: Dispatch<SetStateAction<Cart>>
+    addToCart: (item: Omit<CartItem, 'quantity'>) => void
 }
 
 export const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -54,5 +55,23 @@ export const CartProvider = ({ children }: CartProvidersProps) => {
         window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart))
     }, [cart])
 
-    return <CartContext.Provider value={{ cart, setCart }}>{children}</CartContext.Provider>
+    const addToCart = (item: Omit<CartItem, 'quantity'>) => {
+        setCart((currentCart) => {
+            const existingItem = currentCart.find(
+                (cartItem) => cartItem.type === item.type && cartItem.id === item.id,
+            )
+
+            if (existingItem) {
+                return currentCart.map((cartItem) =>
+                    cartItem.type === item.type && cartItem.id === item.id
+                        ? { ...cartItem, quantity: cartItem.quantity + 1 }
+                        : cartItem,
+                )
+            }
+
+            return [...currentCart, { ...item, quantity: 1 }]
+        })
+    }
+
+    return <CartContext.Provider value={{ cart, setCart, addToCart }}>{children}</CartContext.Provider>
 }
