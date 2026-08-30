@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import { useParams } from 'react-router-dom'
-import NavBar from '../componants/NavBar'
+import NavBar from '../components/NavBar'
 import './ProductPage.css'
 import { CartContext } from '../contexts/CartContext'
 import { API_URL } from '../api'

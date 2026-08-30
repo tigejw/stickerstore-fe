@@ -2,8 +2,15 @@ import { useEffect, useState, useContext } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { API_URL } from '../api'
-import NavBar from '../componants/NavBar'
+import NavBar from '../components/NavBar'
 import { CartContext } from '../contexts/CartContext'
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../components/ui/accordion"
 
 type Product = {
   product_id: number
@@ -109,6 +116,37 @@ export default function HomePage() {
             </Link>
           ))}
         </div>
+      </section>
+      <section className="mt-6 border border-border rounded-xl p-4" aria-labelledby="faq-heading">
+        <h2 id="faq-heading" className="m-0 text-text-muted text-xs uppercase tracking-wide">
+          FAQ
+        </h2>
+       <Accordion defaultValue={["shipping"]}>
+          <AccordionItem value="shipping" className="border-border">
+            <AccordionTrigger className="text-[0.9rem] font-medium hover:text-accent">
+              Shipping
+            </AccordionTrigger>
+            <AccordionContent className="text-text-muted text-[0.85rem]">
+              We currently only ship within Germany and the EU. This may change in the future as we plan to ship to the UK asap!
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="returns" className="border-border">
+            <AccordionTrigger className="text-[0.9rem] font-medium hover:text-accent">
+              Returns
+            </AccordionTrigger>
+            <AccordionContent className="text-text-muted text-[0.85rem]">
+              You have the right to request a refund within 14 days of recieving your order. You can read more about our refund policy here: xyz
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="durability" className="border-border">
+            <AccordionTrigger className="text-[0.9rem] font-medium hover:text-accent">
+              Sticker Quality
+            </AccordionTrigger>
+            <AccordionContent className="text-text-muted text-[0.85rem]">
+              Our stickers are printed on xyz paper using the xyz printer. As such they are or are not waterproof and uv proof!
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </section>
     </main>
   )
