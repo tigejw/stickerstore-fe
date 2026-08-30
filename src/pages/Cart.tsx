@@ -1,6 +1,6 @@
 import { useContext, useMemo, useState } from 'react'
 import axios from 'axios'
-import NavBar from '../componants/NavBar'
+import NavBar from '../components/NavBar'
 import { CartContext, type CartItem } from '../contexts/CartContext'
 import { API_URL } from '../api'
 
@@ -94,8 +94,8 @@ export default function CartPage() {
             return (
               <li key={`${cartItem.type}-${cartItem.id}`}>
                 <div>
-                  {cartItem.thumbnail ? (
-                    <img src={cartItem.thumbnail} alt={cartItem.name} width={72} height={72} />
+                  {cartItem.thumbnail_url ? (
+                    <img src={cartItem.thumbnail_url} alt={cartItem.name} width={72} height={72} />
                   ) : (
                     <div>Thumbnail</div>
                   )}

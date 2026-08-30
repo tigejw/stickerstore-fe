@@ -5,7 +5,7 @@ export type CartItem = {
     id: number
     name: string
     quantity: number
-    thumbnail: string | null
+    thumbnail_url: string | null
     price: number
 }
 
