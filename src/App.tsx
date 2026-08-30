@@ -4,7 +4,7 @@ import ProductPage from "./pages/ProductPage";
 import BundlesPage from "./pages/Bundles";
 import CartPage from "./pages/Cart";
 import StickersPage from "./pages/Stickers";
-import './App.css'
+import './index.css'
 
 function App() {
   return (

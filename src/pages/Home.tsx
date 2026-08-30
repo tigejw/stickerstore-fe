@@ -10,7 +10,8 @@ type Product = {
   slug: string
   name: string
   price: number
-  thumbnail?: string | null
+  thumbnail_url: string
+  thumbnail_alt_text?: string
 }
 
 function formatPriceFromCents(value: number) {
@@ -54,10 +55,7 @@ export default function HomePage() {
               role="listitem"
             >
               <article className="product-card">
-                {/* {product.thumbnail ? <img src={product.thumbnail} aria-label={`${product.name} thumbnail`}></img> :
-                  <div className="product-thumb" aria-label={`${product.name} thumbnail placeholder`}>
-                    Thumbnail
-                  </div>} */}
+                <img src={product.thumbnail_url} aria-label={`${product.thumbnail_alt_text}`}></img>
                 <h2 className="product-name">{product.name}</h2>
                 <p className="product-price">{formatPriceFromCents(product.price)}</p>
                 <span className="product-action">View sticker</span>
