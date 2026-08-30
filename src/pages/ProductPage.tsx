@@ -56,40 +56,19 @@ export default function ProductPage() {
         throw new Error('CartContext error')
     }
 
-    const { setCart } = cartContext
+    const { addToCart } = cartContext
 
     const handleAddToCart = () => {
         if (!item) {
             return
         }
 
-        setCart((currentCart) => {
-            const itemId = isBundle(item) ? item.bundle_id : item.product_id
-            const itemType = isBundle(item) ? 'bundle' : 'product'
-
-            const existingItem = currentCart.find(
-                (cartItem) => cartItem.type === itemType && cartItem.id === itemId,
-            )
-
-            if (existingItem) {
-                return currentCart.map((cartItem) =>
-                    cartItem.type === itemType && cartItem.id === itemId
-                        ? { ...cartItem, quantity: cartItem.quantity + 1 }
-                        : cartItem,
-                )
-            }
-
-            return [
-                ...currentCart,
-                {
-                    type: itemType,
-                    id: itemId,
-                    name: item.name,
-                    quantity: 1,
-                    thumbnail: isBundle(item) ? item.cover_image : item.thumbnail ?? null,
-                    price: item.price,
-                },
-            ]
+        addToCart({
+            type: isBundle(item) ? 'bundle' : 'product',
+            id: isBundle(item) ? item.bundle_id : item.product_id,
+            name: item.name,
+            thumbnail: isBundle(item) ? item.cover_image : item.thumbnail ?? null,
+            price: item.price,
         })
     }
 
@@ -149,7 +128,7 @@ export default function ProductPage() {
 
                 <p className="product-detail-price">{formatPriceFromCents(item.price)}</p>
                 <p className="product-detail-description">{item.description}</p>
-                
+
                 {isBundleItem && (
                     <div className="bundle-products">
                         <h2>Includes:</h2>
