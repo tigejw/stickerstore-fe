@@ -7,6 +7,7 @@ export type Product = {
   price: number
   thumbnail_url: string
   thumbnail_alt_text?: string
+  images: Image[]
 }
 export type Bundle = {
     bundle_id: number
@@ -19,11 +20,11 @@ export type Bundle = {
     active: boolean
     created_at: string
     is_new: boolean
-    images: BundleImage[]
+    images: Image[]
     products: Product[]
 }
 
-type BundleImage = {
+type Image = {
   image_url: string;
   alt_text: string;
   is_thumbnail: boolean;

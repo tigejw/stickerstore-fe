@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState, useContext } from "react"
-import type { Product } from '../types/types'
+import type { ProductOrBundle, Bundle } from '../types/types'
 import { CartContext } from "../contexts/CartContext"
 
 interface AddToCartButtonProps {
-    product: Product
+    product: ProductOrBundle
+}
+
+function isBundle(item: ProductOrBundle): item is Bundle {
+    return 'bundle_id' in item
 }
 
 export default function AddToCartButton({ product }: AddToCartButtonProps) {
@@ -25,14 +29,14 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
 
     const { addToCart } = cartContext
 
-    function handleAddToCart(e: React.MouseEvent, product: Product) {
+    function handleAddToCart(e: React.MouseEvent, item: ProductOrBundle) {
         e.preventDefault()
         addToCart({
-            type: 'product',
-            id: product.product_id,
-            name: product.name,
-            thumbnail_url: product.thumbnail_url ?? null,
-            price: product.price,
+            type: isBundle(item) ? 'bundle' : 'product',
+            id: isBundle(item) ? item.bundle_id : item.product_id,
+            name: item.name,
+            thumbnail_url: item.thumbnail_url ?? null,
+            price: item.price,
         })
         setJustAdded(true)
         if (timeoutRef.current) clearTimeout(timeoutRef.current)

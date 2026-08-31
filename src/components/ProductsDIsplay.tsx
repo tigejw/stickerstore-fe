@@ -24,10 +24,12 @@ export default function ProductsDislpay({ stickerOrBundle }: ProductsDisplayProp
 
         axios
             .get<Product[]>(
-                `${API_URL}/${stickerOrBundle === "sticker" ? "products" : "bundles"}?sort_by=${sort_by}&order=${order}`
+                `${API_URL}/${stickerOrBundle === "sticker" ? "products" : "bundles"}?sort_by=${sort_by}&order=${order}&active=true`
             )
             .then((res) => {
                 setProducts(res.data)
+
+                console.log(res.data)
             })
             .catch(() => {
                 setProducts([])
@@ -79,6 +81,7 @@ export default function ProductsDislpay({ stickerOrBundle }: ProductsDisplayProp
                     <Link
                         key={product.product_id}
                         to={`/${stickerOrBundle}s/${product.slug}`}
+                        state={{ preview: product }}
                         className="no-underline text-inherit"
                         role="listitem"
                     >
