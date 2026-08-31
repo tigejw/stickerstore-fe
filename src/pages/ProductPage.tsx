@@ -4,45 +4,8 @@ import { useParams } from 'react-router-dom'
 import NavBar from '../components/NavBar'
 import './ProductPage.css'
 import { CartContext } from '../contexts/CartContext'
-import { API_URL } from '../api'
-
-type Product = {
-    product_id: number
-    slug: string
-    name: string
-    description: string
-    price: number
-    thumbnail_url: string | null
-    thumbnail_alt_text: string
-}
-
-interface BundleImage {
-    image_url: string;
-    alt_text: string;
-    is_thumbnail: boolean;
-    display_order: number;
-}
-
-type Bundle = {
-    bundle_id: number
-    slug: string
-    name: string
-    description: string
-    thumbnail_url: string
-    thumbnail_alt_text: string
-    price: number
-    active: boolean
-    created_at: string
-    is_new: boolean
-    images: BundleImage[]
-    products: Product[]
-}
-
-type ProductOrBundle = Product | Bundle
-type ProductPageResponse = {
-    product?: ProductOrBundle
-    bundle?: ProductOrBundle
-}
+import { API_URL } from '../api-url'
+import type { Bundle, ProductOrBundle, ProductPageResponse } from '../types/types'
 
 function formatPriceFromCents(value: number) {
     const numericValue = Number(value) || NaN
