@@ -1,10 +1,10 @@
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { API_URL } from '../api-url'
 import NavBar from '../components/NavBar'
-import { CartContext } from '../contexts/CartContext'
 import type { Product } from '../types/types'
+import AddToCartButton from '../components/AddToCartButton'
 import {
   Accordion,
   AccordionContent,
@@ -21,37 +21,17 @@ function formatPriceFromCents(value: number) {
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
-  const cartContext = useContext(CartContext)
-
-  if (!cartContext) {
-    throw new Error('CartContext error')
-  }
-
-  const { addToCart } = cartContext
 
   useEffect(() => {
     axios
       .get<Product[]>(`${API_URL}/products?is_new=true`)
       .then((res) => {
         setProducts(res.data)
-        console.log(res.data)
       })
       .catch(() => {
         setProducts([])
       })
   }, [])
-
-  function handleAddToCart(e: React.MouseEvent, product: Product) {
-    e.preventDefault()
-    // e.stopPropagation()
-    addToCart({
-      type: 'product',
-      id: product.product_id,
-      name: product.name,
-      thumbnail_url: product.thumbnail_url ?? null,
-      price: product.price,
-    })
-  }
 
   return (
     <main className="min-h-screen p-4">
@@ -97,12 +77,7 @@ export default function HomePage() {
                 <p className="m-0 text-text-muted text-[0.82rem] text-center">
                   {formatPriceFromCents(product.price)}
                 </p>
-                <button
-                  onClick={(e) => handleAddToCart(e, product)}
-                  className="mt-2 inline-flex items-center min-h-8 bg-accent text-white rounded-full px-[0.7rem] text-xs uppercase cursor-pointer hover:opacity-90"
-                >
-                  Add to cart
-                </button>
+                <AddToCartButton product={product} />
               </article>
             </Link>
           ))}
