@@ -2,7 +2,7 @@ import { useContext, useMemo, useState } from 'react'
 import axios from 'axios'
 import NavBar from '../components/NavBar'
 import { CartContext, type CartItem } from '../contexts/CartContext'
-import { API_URL } from '../api'
+import { API_URL } from '../api-url'
 
 function formatPriceFromCents(value: number) {
   return new Intl.NumberFormat('en-DE', {

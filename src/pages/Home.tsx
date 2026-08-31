@@ -1,25 +1,16 @@
 import { useEffect, useState, useContext } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
-import { API_URL } from '../api'
+import { API_URL } from '../api-url'
 import NavBar from '../components/NavBar'
 import { CartContext } from '../contexts/CartContext'
-
+import type { Product } from '../types/types'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../components/ui/accordion"
-
-type Product = {
-  product_id: number
-  slug: string
-  name: string
-  price: number
-  thumbnail_url: string
-  thumbnail_alt_text?: string
-}
 
 function formatPriceFromCents(value: number) {
   return new Intl.NumberFormat('en-EN', {
@@ -121,7 +112,7 @@ export default function HomePage() {
         <h2 id="faq-heading" className="m-0 text-text-muted text-xs uppercase tracking-wide">
           FAQ
         </h2>
-       <Accordion defaultValue={["shipping"]}>
+        <Accordion defaultValue={["shipping"]}>
           <AccordionItem value="shipping" className="border-border">
             <AccordionTrigger className="text-[0.9rem] font-medium hover:text-accent">
               Shipping

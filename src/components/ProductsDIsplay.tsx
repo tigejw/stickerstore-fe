@@ -1,29 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { API_URL } from '../api'
-
-//extract out WET
-type Product = {
-    product_id: number
-    slug: string
-    name: string
-    price: number
-    thumbnail?: string | null
-    released_at?: string | null
-    created_at?: string | null
-}
-type StickerOrBundle = "sticker" | "bundle"
-type ProductsDisplayProps = {
-    stickerOrBundle: StickerOrBundle
-}
-type SortOption =
-    | 'price-asc'
-    | 'price-desc'
-    | 'name-asc'
-    | 'name-desc'
-    | 'created_at-asc'
-    | 'created_at-desc'
+import { API_URL } from '../api-url'
+import type { Product, ProductsDisplayProps, SortOption } from "../types/types";
 
 const sortOptions: Array<{ value: SortOption; label: string }> = [
     { value: 'price-asc', label: 'Price: low to high' },
