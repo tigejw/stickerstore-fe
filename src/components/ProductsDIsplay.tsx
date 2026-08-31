@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { API_URL } from '../api-url'
 import type { Product, ProductsDisplayProps, SortOption } from "../types/types";
 import { formatPriceFromCents, getSortQuery } from "../utils/ProductDisplayUtils";
-import { CartContext } from "../contexts/CartContext"
+
+import AddToCartButton from "../components/AddToCartButton"
 const sortOptions: Array<{ value: SortOption; label: string }> = [
     { value: 'price-asc', label: 'Price: low to high' },
     { value: 'price-desc', label: 'Price: high to low' },
@@ -17,13 +18,7 @@ const sortOptions: Array<{ value: SortOption; label: string }> = [
 export default function ProductsDislpay({ stickerOrBundle }: ProductsDisplayProps) {
     const [products, setProducts] = useState<Product[]>([])
     const [sortBy, setSortBy] = useState<SortOption>('created_at-desc')
-    const cartContext = useContext(CartContext)
 
-    if (!cartContext) {
-        throw new Error('CartContext error')
-    }
-
-    const { addToCart } = cartContext
     useEffect(() => {
         const { sort_by, order } = getSortQuery(sortBy)
 
@@ -41,16 +36,7 @@ export default function ProductsDislpay({ stickerOrBundle }: ProductsDisplayProp
 
     const heading = stickerOrBundle === "sticker" ? "All stickers" : "All bundles"
 
-    function handleAddToCart(e: React.MouseEvent, product: Product) {
-        e.preventDefault()
-        addToCart({
-            type: 'product',
-            id: product.product_id,
-            name: product.name,
-            thumbnail_url: product.thumbnail_url ?? null,
-            price: product.price,
-        })
-    }
+
 
 
     return (
@@ -111,14 +97,7 @@ export default function ProductsDislpay({ stickerOrBundle }: ProductsDisplayProp
                             <p className="m-0 text-text-muted text-[0.82rem] text-center">
                                 {formatPriceFromCents(product.price)}
                             </p>
-                            <button
-                                onClick={(e) => {
-                                    handleAddToCart(e, product)
-                                }}
-                                className="mt-2 inline-flex items-center min-h-8 bg-accent text-white rounded-full px-[0.7rem] text-xs uppercase cursor-pointer hover:opacity-90"
-                            >
-                                Add to cart
-                            </button>
+                            <AddToCartButton product={product} />
                         </article>
                     </Link>
                 ))}
