@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useEffect, useRef, useState, useContext } from "react"
 import type { Product } from '../types/types'
 import { CartContext } from "../contexts/CartContext"
 
@@ -7,6 +7,16 @@ interface AddToCartButtonProps {
 }
 
 export default function AddToCartButton({ product }: AddToCartButtonProps) {
+    const [justAdded, setJustAdded] = useState(false)
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current)
+        }
+    }, [])
+
+
     const cartContext = useContext(CartContext)
 
     if (!cartContext) {
@@ -24,13 +34,19 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
             thumbnail_url: product.thumbnail_url ?? null,
             price: product.price,
         })
+        setJustAdded(true)
+        if (timeoutRef.current) clearTimeout(timeoutRef.current)
+        timeoutRef.current = setTimeout(() => setJustAdded(false), 200)
     }
     return (
         <button
             onClick={(e) => {
                 handleAddToCart(e, product)
             }}
-            className={"mt-2 inline-flex items-center min-h-8 bg-accent text-white rounded-full px-[0.7rem] text-xs uppercase cursor-pointer hover:opacity-90"}
+            className={
+                `mt-2 inline-flex items-center min-h-8 text-white rounded-full px-[0.7rem] text-xs uppercase cursor-pointer transition-colors duration-150 ${justAdded ? "bg-accent-dark" : "bg-accent hover:opacity-90"
+                }`
+            }
         >
             Add to cart
         </button>
