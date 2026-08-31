@@ -66,7 +66,7 @@ export default function ProductPage() {
     }
 
     const isBundleItem = isBundle(item)
-    const images = item.images ?? []
+    const images = item.images.filter((image)=>!image.is_thumbnail) ?? []
     const activeImage = images[activeImageIndex]
 
     const goToPrevImage = () => {
