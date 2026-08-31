@@ -1,19 +1,12 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import NavBar from '../components/NavBar'
-import './ProductPage.css'
-import { CartContext } from '../contexts/CartContext'
 import { API_URL } from '../api-url'
 import type { Bundle, ProductOrBundle, ProductPageResponse } from '../types/types'
+import { formatPriceFromCents } from '../utils/ProductDisplayUtils'
+import AddToCartButton from '../components/AddToCartButton'
 
-function formatPriceFromCents(value: number) {
-    const numericValue = Number(value) || NaN
-    return new Intl.NumberFormat('en-DE', {
-        style: 'currency',
-        currency: 'EUR',
-    }).format(numericValue / 100)
-}
 
 function isBundle(item: ProductOrBundle): item is Bundle {
     return 'bundle_id' in item
@@ -21,30 +14,12 @@ function isBundle(item: ProductOrBundle): item is Bundle {
 
 export default function ProductPage() {
     const { type, slug } = useParams()
-    const [item, setItem] = useState<ProductOrBundle | null>(null)
-    const [loading, setLoading] = useState(true)
-    const cartContext = useContext(CartContext)
+    const location = useLocation()
+    const preview = (location.state as { preview?: ProductOrBundle } | null)?.preview ?? null
 
-    if (!cartContext) {
-        throw new Error('CartContext error')
-    }
-
-    const { addToCart } = cartContext
-
-    const handleAddToCart = () => {
-        if (!item) {
-            return
-        }
-
-        addToCart({
-            type: isBundle(item) ? 'bundle' : 'product',
-            id: isBundle(item) ? item.bundle_id : item.product_id,
-            name: item.name,
-            thumbnail_url: item.thumbnail_url,
-            price: item.price,
-        })
-    }
-
+    const [item, setItem] = useState<ProductOrBundle | null>(preview)
+    const [loading, setLoading] = useState(!preview)
+    const [activeImageIndex, setActiveImageIndex] = useState(0)
     useEffect(() => {
         if (!type || !slug) {
             setLoading(false)
@@ -58,12 +33,19 @@ export default function ProductPage() {
                 setItem(res.data.product ?? res.data.bundle ?? null)
             })
             .catch(() => {
-                setItem(null)
+                if (!preview) {
+                    setItem(null)
+                }
             })
             .finally(() => {
                 setLoading(false)
             })
     }, [type, slug])
+
+    useEffect(() => {
+        setActiveImageIndex(0)
+    }, [item])
+
 
     if (loading) {
         return (
@@ -84,40 +66,96 @@ export default function ProductPage() {
     }
 
     const isBundleItem = isBundle(item)
-    const imageUrl = item.thumbnail_url
+    const images = item.images ?? []
+    const activeImage = images[activeImageIndex]
+
+    const goToPrevImage = () => {
+        setActiveImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
+    }
+
+    const goToNextImage = () => {
+        setActiveImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
+    }
 
     return (
-        <main className="product-page">
+        <main className="min-h-screen p-4">
             <NavBar />
-            <section className="product-detail" aria-labelledby="product-title">
-                <div className="product-detail-thumb" aria-label={`${item.name} thumbnail placeholder`}>
-                    {imageUrl ? (
-                        <img src={imageUrl} alt={item.name} />
-                    ) : (
-                        'Thumbnail'
+            <section
+                className="border border-gray-200 rounded-xl p-4"
+                aria-labelledby="product-title"
+            >
+                <div className="mb-3">
+                    <div className="relative border border-dashed border-gray-300 rounded-lg bg-gray-100 aspect-square grid place-items-center text-gray-500 overflow-hidden">
+                        {activeImage ? (
+                            <img
+                                src={activeImage.image_url}
+                                alt={activeImage.alt_text || item.name}
+                                className="h-full w-full object-cover"
+                            />
+                        ) : (
+                            'No image available'
+                        )}
+
+                        {images.length > 1 && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={goToPrevImage}
+                                    aria-label="Previous image"
+                                    className="absolute left-2 top-1/2 -translate-y-1/2 grid place-items-center h-8 w-8 rounded-full bg-white/80 text-gray-700 shadow hover:bg-white"
+                                >
+                                    ‹
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={goToNextImage}
+                                    aria-label="Next image"
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 grid place-items-center h-8 w-8 rounded-full bg-white/80 text-gray-700 shadow hover:bg-white"
+                                >
+                                    ›
+                                </button>
+                            </>
+                        )}
+                    </div>
+
+                    {images.length > 1 && (
+                        <div className="flex justify-center gap-1.5 mt-2">
+                            {images.map((image, index) => (
+                                <button
+                                    key={image.image_url}
+                                    type="button"
+                                    onClick={() => setActiveImageIndex(index)}
+                                    aria-label={`Show image ${index + 1}`}
+                                    className={`h-2 w-2 rounded-full ${index === activeImageIndex ? 'bg-gray-700' : 'bg-gray-300'
+                                        }`}
+                                />
+                            ))}
+                        </div>
                     )}
                 </div>
-                <h1 id="product-title">{item.name}</h1>
 
-                <p className="product-detail-price">{formatPriceFromCents(item.price)}</p>
-                <p className="product-detail-description">{item.description}</p>
+                <h1 id="product-title" className="text-xl font-semibold m-0">
+                    {item.name}
+                </h1>
+
+                <p className="mt-1.5 text-gray-600">{formatPriceFromCents(item.price)}</p>
+                <p className="mt-3 leading-relaxed">{item.description}</p>
 
                 {isBundleItem && (
-                    <div className="bundle-products">
-                        <h2>Includes:</h2>
-                        <ul>
+                    <div className="mt-4">
+                        <h2 className="text-base font-semibold">Includes:</h2>
+                        <ul className="mt-2 space-y-1">
                             {item.products.map((product) => (
                                 <li key={product.product_id}>
                                     {product.name} - {formatPriceFromCents(product.price)}
                                 </li>
                             ))}
                         </ul>
+                        {/* TODO: small component showing thumbnails of included products' images */}
                     </div>
                 )}
 
-                <button type="button" className="product-detail-add-to-cart" onClick={handleAddToCart}>
-                    Add to cart
-                </button>
+                <AddToCartButton product={item} />
             </section>
         </main>
     )

@@ -24,7 +24,7 @@ export default function HomePage() {
 
   useEffect(() => {
     axios
-      .get<Product[]>(`${API_URL}/products?is_new=true`)
+      .get<Product[]>(`${API_URL}/products?is_new=true&active=true`)
       .then((res) => {
         setProducts(res.data)
       })
@@ -59,6 +59,7 @@ export default function HomePage() {
             <Link
               key={product.product_id}
               to={`/stickers/${product.slug}`}
+               state={{ preview: product }}
               className="no-underline text-inherit"
               role="listitem"
             >
