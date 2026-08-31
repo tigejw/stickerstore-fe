@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { API_URL } from '../api-url'
 import type { Product, ProductsDisplayProps, SortOption } from "../types/types";
-
+import { formatPriceFromCents, getSortQuery } from "../utils/ProductDisplayUtils";
+import { CartContext } from "../contexts/CartContext"
 const sortOptions: Array<{ value: SortOption; label: string }> = [
     { value: 'price-asc', label: 'Price: low to high' },
     { value: 'price-desc', label: 'Price: high to low' },
@@ -12,24 +13,17 @@ const sortOptions: Array<{ value: SortOption; label: string }> = [
     { value: 'created_at-asc', label: 'Released date: old to new' },
     { value: 'created_at-desc', label: 'Released date: new to old' },
 ]
-//extract out WET
-function formatPriceFromCents(value: number) {
-    return new Intl.NumberFormat('en-EN', {
-        style: 'currency',
-        currency: 'EUR',
-    }).format(value / 100)
-}
-
-function getSortQuery(sortBy: SortOption) {
-    const [sort_by, order] = sortBy.split('-') as [SortOption extends `${infer Field}-${string}` ? Field : never, 'asc' | 'desc']
-
-    return { sort_by, order }
-}
 
 export default function ProductsDislpay({ stickerOrBundle }: ProductsDisplayProps) {
     const [products, setProducts] = useState<Product[]>([])
     const [sortBy, setSortBy] = useState<SortOption>('created_at-desc')
+    const cartContext = useContext(CartContext)
 
+    if (!cartContext) {
+        throw new Error('CartContext error')
+    }
+
+    const { addToCart } = cartContext
     useEffect(() => {
         const { sort_by, order } = getSortQuery(sortBy)
 
@@ -44,42 +38,87 @@ export default function ProductsDislpay({ stickerOrBundle }: ProductsDisplayProp
                 setProducts([])
             })
     }, [stickerOrBundle, sortBy])
-    //same code as homepage feature: could be extracted!
+
+    const heading = stickerOrBundle === "sticker" ? "All stickers" : "All bundles"
+
+    function handleAddToCart(e: React.MouseEvent, product: Product) {
+        e.preventDefault()
+        addToCart({
+            type: 'product',
+            id: product.product_id,
+            name: product.name,
+            thumbnail_url: product.thumbnail_url ?? null,
+            price: product.price,
+        })
+    }
+
+
     return (
-        <section className="featured-section" aria-labelledby="featured-heading">
-            <div className="featured-heading-wrap">
-                <p className="featured-kicker">Featured</p>
-                <h1 id="featured-heading">New stickers</h1>
+        <section
+            className="border border-border rounded-xl p-4"
+            aria-labelledby="products-heading"
+        >
+            <div className="mb-[0.95rem] flex items-end justify-between gap-3 flex-wrap">
+                <div>
+                    <p className="m-0 text-text-muted text-xs uppercase tracking-wide">
+                        {stickerOrBundle === "sticker" ? "Stickers" : "Bundles"}
+                    </p>
+                    <h1 id="products-heading" className="mt-1 mb-0 text-xl">
+                        {heading}
+                    </h1>
+                </div>
+
+                <label className="flex items-center gap-2 text-sm">
+                    <span className="text-text-muted text-xs uppercase tracking-wide">Sort by</span>
+                    <select
+                        className="border border-border rounded-lg px-2 py-1 text-sm bg-transparent"
+                        value={sortBy}
+                        onChange={(event) => setSortBy(event.target.value as SortOption)}
+                    >
+                        {sortOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                </label>
             </div>
-            <label className="product-sort">
-                <span className="product-sort-label">Sort by</span>
-                <select
-                    className="product-sort-select"
-                    value={sortBy}
-                    onChange={(event) => setSortBy(event.target.value as SortOption)}
-                >
-                    {sortOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
-                </select>
-            </label>
-            <div className="product-grid" role="list" aria-label="New products">
+
+            <div
+                className="grid grid-cols-2 sm:grid-cols-3 gap-3"
+                role="list"
+                aria-label={stickerOrBundle === "sticker" ? "Stickers" : "Bundles"}
+            >
                 {products.map((product) => (
                     <Link
                         key={product.product_id}
                         to={`/${stickerOrBundle}s/${product.slug}`}
-                        className="product-card-link"
+                        className="no-underline text-inherit"
                         role="listitem"
                     >
-                        <article className="product-card">
-                            <div className="product-thumb" aria-label={`${product.name} thumbnail placeholder`}>
-                                Thumbnail
-                            </div>
-                            <h2 className="product-name">{product.name}</h2>
-                            <p className="product-price">{formatPriceFromCents(product.price)}</p>
-                            <span className="product-action">View sticker</span>
+                        <article className="flex flex-col items-center h-full border border-border rounded-xl p-[0.6rem]">
+                            <img
+                                src={product.thumbnail_url}
+                                alt={product.thumbnail_alt_text ?? product.name}
+                                className="w-full aspect-square rounded-lg border border-dashed border-border-dashed bg-surface-muted object-cover"
+                            />
+
+                            <div className="flex-1" />
+
+                            <h2 className="mt-[0.55rem] mb-1 text-[0.9rem] leading-[1.3] line-clamp-2 text-center font-medium">
+                                {product.name}
+                            </h2>
+                            <p className="m-0 text-text-muted text-[0.82rem] text-center">
+                                {formatPriceFromCents(product.price)}
+                            </p>
+                            <button
+                                onClick={(e) => {
+                                    handleAddToCart(e, product)
+                                }}
+                                className="mt-2 inline-flex items-center min-h-8 bg-accent text-white rounded-full px-[0.7rem] text-xs uppercase cursor-pointer hover:opacity-90"
+                            >
+                                Add to cart
+                            </button>
                         </article>
                     </Link>
                 ))}

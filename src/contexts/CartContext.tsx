@@ -11,6 +11,16 @@ export type CartItem = {
 
 export type Cart = CartItem[]
 
+interface CartProvidersProps {
+    children: ReactNode
+}
+
+export interface CartContextType {
+    cart: Cart
+    setCart: Dispatch<SetStateAction<Cart>>
+    addToCart: (item: Omit<CartItem, 'quantity'>) => void
+}
+
 const CART_STORAGE_KEY = 'stickerstore-cart'
 
 function getInitialCart(): Cart {
@@ -36,15 +46,6 @@ function getInitialCart(): Cart {
 }
 
 
-interface CartProvidersProps {
-    children: ReactNode
-}
-
-export interface CartContextType {
-    cart: Cart
-    setCart: Dispatch<SetStateAction<Cart>>
-    addToCart: (item: Omit<CartItem, 'quantity'>) => void
-}
 
 export const CartContext = createContext<CartContextType | undefined>(undefined)
 

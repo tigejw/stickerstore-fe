@@ -34,7 +34,6 @@ export default function HomePage() {
       .get<Product[]>(`${API_URL}/products?is_new=true`)
       .then((res) => {
         setProducts(res.data)
-        console.log(res.data)
       })
       .catch(() => {
         setProducts([])
@@ -43,7 +42,6 @@ export default function HomePage() {
 
   function handleAddToCart(e: React.MouseEvent, product: Product) {
     e.preventDefault()
-    // e.stopPropagation()
     addToCart({
       type: 'product',
       id: product.product_id,
