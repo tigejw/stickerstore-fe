@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams, useLocation, Link } from 'react-router-dom'
 import NavBar from '../components/NavBar'
 import { API_URL } from '../api-url'
 import type { Bundle, ProductOrBundle, ProductPageResponse } from '../types/types'
@@ -66,7 +66,7 @@ export default function ProductPage() {
     }
 
     const isBundleItem = isBundle(item)
-    const images = item.images ?? []
+    const images = item.images.filter((image) => !image.is_thumbnail) ?? []
     const activeImage = images[activeImageIndex]
 
     const goToPrevImage = () => {
@@ -140,22 +140,33 @@ export default function ProductPage() {
 
                 <p className="mt-1.5 text-gray-600">{formatPriceFromCents(item.price)}</p>
                 <p className="mt-3 leading-relaxed">{item.description}</p>
-
+                <AddToCartButton product={item} />
                 {isBundleItem && (
                     <div className="mt-4">
                         <h2 className="text-base font-semibold">Includes:</h2>
-                        <ul className="mt-2 space-y-1">
+                        <ul className="mt-2 grid grid-cols-3 sm:grid-cols-4 gap-2 list-none p-0">
                             {item.products.map((product) => (
                                 <li key={product.product_id}>
-                                    {product.name} - {formatPriceFromCents(product.price)}
+                                    <Link
+                                        to={`/stickers/${product.slug}`}
+                                        className="flex flex-col items-center text-inherit no-underline"
+                                    >
+                                        <img
+                                            src={product.thumbnail_url}
+                                            alt={product.thumbnail_alt_text ?? product.name}
+                                            className="w-full aspect-square rounded-lg border border-dashed border-gray-300 bg-gray-100 object-cover"
+                                        />
+                                        <span className="mt-1 text-xs text-center leading-tight line-clamp-2">
+                                            {product.name}
+                                        </span>
+                                    </Link>
                                 </li>
                             ))}
                         </ul>
-                        {/* TODO: small component showing thumbnails of included products' images */}
                     </div>
                 )}
 
-                <AddToCartButton product={item} />
+
             </section>
         </main>
     )
