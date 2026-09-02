@@ -1,5 +1,5 @@
 import NavBar from '../components/NavBar'
-import ProductsDislpay from '../components/ProductsDIsplay'
+import ProductsDislpay from '../components/ProductsDisplay'
 
 export default function StickersPage() {
   return (
