@@ -81,24 +81,25 @@ export default function CartPage() {
     })
   }
 
-   return (
+  return (
     <main className="min-h-screen p-4">
       <NavBar />
-      <section className="mx-auto max-w-md px-4 py-8">
-        <h1 className="text-2xl font-semibold">Cart</h1>
- 
+
+      <section className="mx-auto border border-border rounded-xl p-4 max-w-md px-4 py-4">
+        <h1 className="mt-1 mb-0 text-xl">Cart</h1>
         {cart.length === 0 ? (
-          <p className="mt-6 text-text-muted text-sm">Your cart is empty.</p>
+          <p className="m-0 text-text-muted text-xs uppercase tracking-wide py-2">Your cart is empty.</p>
         ) : (
-          <p className="mt-1 text-text-muted text-xs uppercase tracking-wide">
+          <p className="m-0 text-text-muted text-xs uppercase tracking-wide py-2">
             {cart.length} item type{cart.length === 1 ? '' : 's'} in your cart
           </p>
         )}
- 
+
+
         {checkoutError ? (
           <p className="mt-4 text-sm text-red-600">{checkoutError}</p>
         ) : null}
- 
+
         {cart.length > 0 ? (
           <ul>
             {cart.map((cartItem: CartItem) => {
@@ -115,7 +116,7 @@ export default function CartPage() {
                         width={96}
                         height={96}
                         className="h-24 w-24 rounded-lg border border-dashed border-border-dashed bg-surface-muted object-cover"
-      
+
                       />
                     ) : (
                       <div className="flex h-24 w-24 items-center justify-center rounded-md bg-gray-100 text-text-muted text-xs">
@@ -123,16 +124,16 @@ export default function CartPage() {
                       </div>
                     )}
                   </div>
- 
+
                   <div className="min-w-0 flex-1">
                     <div className="text-sm font-semibold uppercase leading-snug">
                       {cartItem.name}
                     </div>
- 
+
                     <div className="mt-2 text-sm text-accent">
                       {formatPriceFromCents(cartItem.price)}
                     </div>
- 
+
                     <div className="mt-3 inline-flex items-center rounded-md border border-gray-300">
                       <button
                         type="button"
@@ -152,7 +153,7 @@ export default function CartPage() {
                         +
                       </button>
                     </div>
- 
+
                     <div className="mt-3">
                       <button
                         type="button"
@@ -168,7 +169,7 @@ export default function CartPage() {
             })}
           </ul>
         ) : null}
- 
+
         {cart.length > 0 ? (
           <div className="mt-6 border-t border-gray-200 pt-4">
             <h2 className="text-lg font-semibold">Order Summary</h2>
@@ -182,7 +183,7 @@ export default function CartPage() {
             </div>
           </div>
         ) : null}
- 
+
         <button
           type="button"
           onClick={handleCheckout}
@@ -195,7 +196,7 @@ export default function CartPage() {
     </main>
   )
 }
- 
 
 
- 
+
+
