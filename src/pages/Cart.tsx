@@ -81,60 +81,121 @@ export default function CartPage() {
     })
   }
 
-  return (
-    <main>
+   return (
+    <main className="min-h-screen p-4">
       <NavBar />
-      <section>
-        <h1>Cart</h1>
-        {cart.length === 0 ? <p>Your cart is empty.</p> : null}
-        {cart.length > 0 ? <p>{cart.length} item type(s) in your cart.</p> : null}
-        {checkoutError ? <p>{checkoutError}</p> : null}
-        <ul>
-          {cart.map((cartItem: CartItem) => {
-            return (
-              <li key={`${cartItem.type}-${cartItem.id}`}>
-                <div>
-                  {cartItem.thumbnail_url ? (
-                    <img src={cartItem.thumbnail_url} alt={cartItem.name} width={72} height={72} />
-                  ) : (
-                    <div>Thumbnail</div>
-                  )}
-                </div>
-                <div>Name: {cartItem.name}</div>
-                <div>Type: {cartItem.type}</div>
-                <div>
-                  Quantity: {cartItem.quantity}
-                  <button onClick={() => handleUpdateQuantity(cartItem.id, cartItem.type, -1)}>
-                    -
-                  </button>
-                  <button onClick={() => handleUpdateQuantity(cartItem.id, cartItem.type, 1)}>
-                    +
-                  </button>
-                </div>
-                <div>
-                  <button onClick={() => handleRemoveItem(cartItem.id, cartItem.type)}>
-                    Remove Item
-                  </button>
-                </div>
-                <div>Price: {formatPriceFromCents(cartItem.price)}</div>
-                <div>Subtotal: {formatPriceFromCents(cartItem.price * cartItem.quantity)}</div>
-              </li>
-            )
-          })}
-        </ul>
-
+      <section className="mx-auto max-w-md px-4 py-8">
+        <h1 className="text-2xl font-semibold">Cart</h1>
+ 
+        {cart.length === 0 ? (
+          <p className="mt-6 text-text-muted text-sm">Your cart is empty.</p>
+        ) : (
+          <p className="mt-1 text-text-muted text-xs uppercase tracking-wide">
+            {cart.length} item type{cart.length === 1 ? '' : 's'} in your cart
+          </p>
+        )}
+ 
+        {checkoutError ? (
+          <p className="mt-4 text-sm text-red-600">{checkoutError}</p>
+        ) : null}
+ 
         {cart.length > 0 ? (
-          <div>
-            <h2>Order Summary</h2>
-            <div>Total items: {totalItems}</div>
-            <div>Total: {formatPriceFromCents(totalPriceCents)}</div>
+          <ul>
+            {cart.map((cartItem: CartItem) => {
+              return (
+                <li
+                  key={`${cartItem.type}-${cartItem.id}`}
+                  className="flex gap-4 border-b border-gray-200 py-6 first:border-t"
+                >
+                  <div className="shrink-0">
+                    {cartItem.thumbnail_url ? (
+                      <img
+                        src={cartItem.thumbnail_url}
+                        alt={cartItem.name}
+                        width={96}
+                        height={96}
+                        className="h-24 w-24 rounded-lg border border-dashed border-border-dashed bg-surface-muted object-cover"
+      
+                      />
+                    ) : (
+                      <div className="flex h-24 w-24 items-center justify-center rounded-md bg-gray-100 text-text-muted text-xs">
+                        No image
+                      </div>
+                    )}
+                  </div>
+ 
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-semibold uppercase leading-snug">
+                      {cartItem.name}
+                    </div>
+ 
+                    <div className="mt-2 text-sm text-accent">
+                      {formatPriceFromCents(cartItem.price)}
+                    </div>
+ 
+                    <div className="mt-3 inline-flex items-center rounded-md border border-gray-300">
+                      <button
+                        type="button"
+                        onClick={() => handleUpdateQuantity(cartItem.id, cartItem.type, -1)}
+                        className="flex h-6 w-6 items-center justify-center text-accent"
+                        aria-label={`Decrease quantity of ${cartItem.name}`}
+                      >
+                        &minus;
+                      </button>
+                      <span className="w-6 text-center text-xs">{cartItem.quantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleUpdateQuantity(cartItem.id, cartItem.type, 1)}
+                        className="flex h-6 w-6 items-center justify-center text-accent"
+                        aria-label={`Increase quantity of ${cartItem.name}`}
+                      >
+                        +
+                      </button>
+                    </div>
+ 
+                    <div className="mt-3">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveItem(cartItem.id, cartItem.type)}
+                        className="text-xs text-accent underline underline-offset-2"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        ) : null}
+ 
+        {cart.length > 0 ? (
+          <div className="mt-6 border-t border-gray-200 pt-4">
+            <h2 className="text-lg font-semibold">Order Summary</h2>
+            <div className="mt-2 flex justify-between text-sm text-text-muted">
+              <span>Total items</span>
+              <span>{totalItems}</span>
+            </div>
+            <div className="mt-1 flex justify-between font-medium">
+              <span>Total</span>
+              <span>{formatPriceFromCents(totalPriceCents)}</span>
+            </div>
           </div>
         ) : null}
-
-        <button type="button" onClick={handleCheckout} disabled={cart.length === 0 || checkingOut}>
+ 
+        <button
+          type="button"
+          onClick={handleCheckout}
+          disabled={cart.length === 0 || checkingOut}
+          className="mt-6 w-full rounded-md bg-accent px-4 py-2.5 text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        >
           {checkingOut ? 'Starting checkout...' : 'Checkout'}
         </button>
       </section>
     </main>
   )
 }
+ 
+
+
+ 
