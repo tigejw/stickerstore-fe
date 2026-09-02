@@ -82,7 +82,7 @@ export default function CartPage() {
   }
 
    return (
-    <main>
+    <main className="min-h-screen p-4">
       <NavBar />
       <section className="mx-auto max-w-md px-4 py-8">
         <h1 className="text-2xl font-semibold">Cart</h1>
@@ -115,7 +115,7 @@ export default function CartPage() {
                         width={96}
                         height={96}
                         className="h-24 w-24 rounded-lg border border-dashed border-border-dashed bg-surface-muted object-cover"
-                        // className="w-full aspect-square rounded-lg border border-dashed border-border-dashed bg-surface-muted object-cover"
+      
                       />
                     ) : (
                       <div className="flex h-24 w-24 items-center justify-center rounded-md bg-gray-100 text-text-muted text-xs">
