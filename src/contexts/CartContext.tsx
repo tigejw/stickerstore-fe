@@ -19,6 +19,7 @@ export interface CartContextType {
     cart: Cart
     setCart: Dispatch<SetStateAction<Cart>>
     addToCart: (item: Omit<CartItem, 'quantity'>) => void
+    clearCart: () => void
 }
 
 const CART_STORAGE_KEY = 'stickerstore-cart'
@@ -74,5 +75,10 @@ export const CartProvider = ({ children }: CartProvidersProps) => {
         })
     }
 
-    return <CartContext.Provider value={{ cart, setCart, addToCart }}>{children}</CartContext.Provider>
+
+  const clearCart = () => {
+    setCart([])
+  }
+
+    return <CartContext.Provider value={{ cart, setCart, addToCart, clearCart }}>{children}</CartContext.Provider>
 }
