@@ -3,7 +3,7 @@ import axios from 'axios'
 import NavBar from '../components/NavBar'
 import { CartContext, type CartItem } from '../contexts/CartContext'
 import { API_URL } from '../api-url'
-
+import { TestModeMessage } from '../components/TestModeMessage'
 function formatPriceFromCents(value: number) {
   return new Intl.NumberFormat('en-DE', {
     style: 'currency',
@@ -183,7 +183,6 @@ export default function CartPage() {
             </div>
           </div>
         ) : null}
-
         <button
           type="button"
           onClick={handleCheckout}
@@ -192,8 +191,20 @@ export default function CartPage() {
         >
           {checkingOut ? 'Starting checkout...' : 'Checkout'}
         </button>
+        <div className="mt-6 border-t border-gray-200 pt-4">
+        <p className="text-text-muted text-xs tracking-wide mt-2">
+          *Quick reminder: this website is opperating within Stripe's Test mode.
+        </p>
+         <p className="text-text-muted text-xs tracking-wide mt-2">
+          To check out the payment handling you can use: 
+        </p>
+        <p className="text-text-muted text-xs tracking-wide mt-2">
+          Card Number: 4242 4242 4242 4242 - any future expiry - any CVC
+        </p>
+        </div>
       </section>
     </main>
+
   )
 }
 
