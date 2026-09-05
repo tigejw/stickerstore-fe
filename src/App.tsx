@@ -10,14 +10,16 @@ import './index.css'
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/stickers" element={<StickersPage />} />
-        <Route path="/:type/:slug" element={<ProductPage />} />
-        <Route path="/bundles" element={<BundlesPage />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/success" element={<SuccessPage />} />
-      </Routes>
+      <div className="max-w-[650px] mx-auto px-4">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/stickers" element={<StickersPage />} />
+          <Route path="/:type/:slug" element={<ProductPage />} />
+          <Route path="/bundles" element={<BundlesPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/success" element={<SuccessPage />} />
+        </Routes>
+      </div>
     </Router>
   )
 }
