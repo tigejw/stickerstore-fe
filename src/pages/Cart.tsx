@@ -85,7 +85,7 @@ export default function CartPage() {
     <main className="min-h-screen p-4">
       <NavBar />
 
-      <section className="mx-auto border border-border rounded-xl p-4 max-w-md px-4 py-4">
+      <section className="mx-auto border border-border rounded-xl p-4 px-4 py-4">
         <h1 className="mt-1 mb-0 text-xl">Cart</h1>
         {cart.length === 0 ? (
           <p className="m-0 text-text-muted text-xs uppercase tracking-wide py-2">Your cart is empty.</p>
