@@ -3,7 +3,6 @@ import axios from 'axios'
 import NavBar from '../components/NavBar'
 import { CartContext, type CartItem } from '../contexts/CartContext'
 import { API_URL } from '../api-url'
-import { TestModeMessage } from '../components/TestModeMessage'
 function formatPriceFromCents(value: number) {
   return new Intl.NumberFormat('en-DE', {
     style: 'currency',
