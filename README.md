@@ -1,32 +1,53 @@
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+# Stickerstore Frontend
+ 
+- React and Tailwind frontend for my Cooliopteryx Sticker Store project.
+- Using the API and database from https://github.com/tigejw/stickerstore
+## Hosted
+ 
+- **Netlify:** https://cooliopteryx.netlify.app/
+## Tech Stack
+ 
+- **Framework:** React (TypeScript)
+- **Styling:** Tailwind CSS
+- **Payments:** Stripe Checkout (via backend API)
+## Local Setup
+ 
+### Prerequisites
+ 
+- Works on Node.js v24.18.0
+- Stickerstore backend API (can run locally - see backend README)
+### Installation
+ 
+```bash
+git clone https://github.com/tigejw/stickerstore-fe.git
+cd stickerstore-fe
+npm install
 ```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+ 
+### Update the API URL
+ 
+- Update `API_URL` in `/src/api-url/index.ts` to point to your locally hosted API (if running the backend locally)
+### Running Locally
+ 
+```bash
+npm run dev
+```
+ 
+App should run at `http://localhost:5173`.
+ 
+## Pages
+ 
+- **Home** - featured/new stickers
+- **Stickers** - full stickers catalog
+- **Bundles** - bundle catalog
+- **Product Pages** - individual product/bundle detail
+- **Cart** - cart summary + Stripe checkout trigger
+- **Success** - following a successful order
+## Components
+ 
+- **Footer** - footer with links to my GitHub, LinkedIn, and email
+- **NavBar** - logo and links to Stickers, Bundles, and Cart
+- **ProductsDisplay** - display grid for products
+- **TestModeMessage** - popup message on first load communicating that the site is a portfolio project
+- **CartContext** - handles cart logic (add-to-cart buttons, etc.)
+ 
