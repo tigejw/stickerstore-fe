@@ -6,6 +6,7 @@ import CartPage from "./pages/Cart";
 import StickersPage from "./pages/Stickers";
 import SuccessPage from "./pages/Success";
 import './index.css'
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/success" element={<SuccessPage />} />
         </Routes>
+      <Footer/>
       </div>
     </Router>
   )
