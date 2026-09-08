@@ -4,10 +4,15 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/save.gif" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://stickerstore.fly.dev" crossorigin>
+  <script>
+    if (!window.location.origin.includes('localhost')) {
+      window.__initialProducts = fetch(
+        'https://stickerstore.fly.dev/api/products?is_new=true&active=true'
+      ).then((r) => r.json());
+    }
+  </script>
   <title>stickerstore</title>
 </head>
 
