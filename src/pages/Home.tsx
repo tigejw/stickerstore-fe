@@ -24,19 +24,34 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
 
   useEffect(() => {
-    axios
-      .get<Product[]>(`${API_URL}/products?is_new=true&active=true`)
-      .then((res) => {
-        setProducts(res.data)
-      })
-      .catch(() => {
-        setProducts([])
-      })
+    const initial = (window as any).__initialProducts as Promise<Product[]> | undefined
+
+    if (initial) {
+      console.log("triggered")
+      initial
+        .then((data) => {
+          console.log(data, "data")
+          return setProducts(data)
+        })
+        .catch(() => {
+          console.log("catch")
+          return setProducts([])
+        })
+    } else {
+      axios
+        .get<Product[]>(`${API_URL}/products?is_new=true&active=true`)
+        .then((res) => {
+          setProducts(res.data)
+        })
+        .catch(() => {
+          setProducts([])
+        })
+    }
   }, [])
 
   return (
     <>
-    <TestModeMessage/>
+      <TestModeMessage />
       <main className="min-h-screen p-4">
         <NavBar />
 
