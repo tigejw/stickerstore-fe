@@ -25,13 +25,13 @@ export default function NavBar() {
             <Link
               key={link.to}
               to={link.to}
-              className="m-0 text-accent text-s uppercase tracking-wide underline underline-offset-2"
+              className="m-0 text-accent text-s uppercase tracking-wide underline underline-offset-2 relative z-1"
             >
               {link.label}
             </Link>
           ))}
         </div>
-        <Link to="/cart" className="flex justify-end mr-2">
+        <Link to="/cart" className="flex justify-end relative z-0 mr-2">
           <div className="relative">
             <ShoppingCart className="h-5 w-5" />
             <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] text-white">
