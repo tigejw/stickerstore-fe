@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useContext } from 'react'
-import logo from '../assets/colliopteryx.jpg'
+import logo from '../assets/cooliopteryx.jpg'
 import { ShoppingCart } from 'lucide-react'
 import { CartContext } from '../contexts/CartContext.tsx'
 

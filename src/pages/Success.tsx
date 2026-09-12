@@ -27,8 +27,8 @@ export default function SuccessPage() {
           >
             Continue shopping
           </Link>
+          <img src="https://tdpqgiofkwlscegszsph.supabase.co/storage/v1/object/public/logo/thankyoufrog.webp"></img>
         </div>
-
       </section>
     </main>
   )
